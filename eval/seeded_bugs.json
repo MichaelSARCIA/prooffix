@@ -1,0 +1,32 @@
+[
+  {
+    "id": "BUG-1",
+    "function": "ShoppingCart.subtotal",
+    "category": "logic/off-by-one",
+    "description": "range(len(items) - 1) excludes the last item from the total."
+  },
+  {
+    "id": "BUG-2",
+    "function": "ShoppingCart.add_item",
+    "category": "edge-case/unhandled-input",
+    "description": "No guard for quantity <= 0; callers can silently add or accumulate zero-quantity items."
+  },
+  {
+    "id": "BUG-3",
+    "function": "ShoppingCart.apply_discount",
+    "category": "security/unsafe-input",
+    "description": "eval() is called with user-supplied discount code string, enabling arbitrary code execution."
+  },
+  {
+    "id": "BUG-4",
+    "function": "CartItem.__init__",
+    "category": "correctness/float-arithmetic",
+    "description": "price stored as float instead of decimal.Decimal; floating-point rounding errors accumulate in monetary calculations."
+  },
+  {
+    "id": "BUG-5",
+    "function": "ShoppingCart.grand_total",
+    "category": "maintainability/deep-nesting-duplication",
+    "description": "Four levels of nested ifs with duplicated discount calculation instead of reusing discount_amount()."
+  }
+]

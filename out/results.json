@@ -1,0 +1,42 @@
+[
+  {
+    "id": "F-01",
+    "repro_test": "tests/repro/test_F01.py",
+    "repro_failed_first": true,
+    "fixed": true,
+    "suite_green": true,
+    "patch": "Replaced eval(f-string) with DISCOUNT_CODES.get(code) in apply_discount()"
+  },
+  {
+    "id": "F-02",
+    "repro_test": "tests/repro/test_F02.py",
+    "repro_failed_first": true,
+    "fixed": true,
+    "suite_green": true,
+    "patch": "Replaced range(len(items)-1) loop with sum(item.line_total() for item in self._items)"
+  },
+  {
+    "id": "F-03",
+    "repro_test": "tests/repro/test_F03.py",
+    "repro_failed_first": true,
+    "fixed": true,
+    "suite_green": true,
+    "patch": "Added 'if quantity <= 0: raise ValueError' guard at top of add_item()"
+  },
+  {
+    "id": "F-04",
+    "repro_test": "tests/repro/test_F04.py",
+    "repro_failed_first": true,
+    "fixed": true,
+    "suite_green": true,
+    "patch": "CartItem.price now stored as Decimal(str(price)); DISCOUNT_CODES values changed to Decimal literals; discount_rate() returns Decimal"
+  },
+  {
+    "id": "F-05",
+    "repro_test": "tests/repro/test_F05.py",
+    "repro_failed_first": true,
+    "fixed": true,
+    "suite_green": true,
+    "patch": "Replaced 4-level nested duplicated grand_total() body with single return subtotal()-discount_amount(); fixed return annotation to Decimal"
+  }
+]
