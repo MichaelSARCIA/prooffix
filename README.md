@@ -2,7 +2,7 @@
 
 ProofFix is an agentic code-quality loop that dramatically accelerates the most expensive parts of software development. Developers report spending roughly 5 hours per week on code review — about 12.5 % of a standard work week — and approximately 45 % of their total time fixing bugs or paying down technical debt rather than shipping new features.[^1] ProofFix addresses both drains at once: across five bug classes in a realistic Python shopping-cart module, the Reviewer → Debugger → Coach loop completed in **7 minutes total** compared to an estimated **225 minutes (3 h 45 min) of equivalent manual work** — a **~32× speedup** — while producing a machine-verified proof test and a targeted coaching note for every single finding.
 
-[^1]: Codacy Developer Survey. "The State of Code Quality." https://blog.codacy.com/codacy-developer-survey
+[^1]: Codacy. "10 Facts About Code Review Quality." https://blog.codacy.com/10-facts-about-code-reviews-and-quality
 
 ## Why this is different
 

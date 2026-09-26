@@ -1,0 +1,74 @@
+[
+  {
+    "id": "F-01",
+    "file": "demo_app/cart.py",
+    "line": 71,
+    "severity": "critical",
+    "category": "security/unsafe-input",
+    "evidence": "apply_discount() passes the raw caller-supplied 'code' string directly into eval() via an f-string. A value like \"') or __import__('os').system('id')#\" executes arbitrary OS commands in the server process. The noqa comment suppresses the linter warning, masking the risk.",
+    "suggested_test": "assert cart.apply_discount(\"'); import os; os.environ['PWNED']='1'#\") == False and os.environ.get('PWNED') is None"
+  },
+  {
+    "id": "F-02",
+    "file": "demo_app/cart.py",
+    "line": 92,
+    "severity": "high",
+    "category": "logic/off-by-one",
+    "evidence": "subtotal() iterates range(len(items) - 1), excluding the last CartItem every time. A two-item cart [Widget $10, Gadget $20] returns 10.0 instead of 30.0. A one-item cart always returns 0.0 regardless of price.",
+    "suggested_test": "cart.add_item('A','A',10.0,1); cart.add_item('B','B',20.0,1); assert cart.subtotal() == 30.0"
+  },
+  {
+    "id": "F-03",
+    "file": "demo_app/cart.py",
+    "line": 39,
+    "severity": "high",
+    "category": "edge-case/unhandled-input",
+    "evidence": "add_item() has no guard on quantity <= 0. quantity=0 inserts a dead line item; quantity=-3 decrements an existing SKU below zero. Both silently corrupt cart state.",
+    "suggested_test": "with pytest.raises(ValueError): cart.add_item('X','X',5.0,0)"
+  },
+  {
+    "id": "F-04",
+    "file": "demo_app/cart.py",
+    "line": 21,
+    "severity": "medium",
+    "category": "correctness/float-arithmetic",
+    "evidence": "CartItem.price is float. Accumulating floats in subtotal() produces monetary drift: 100 items at $0.10 yields 9.999999999999998 instead of 10.00. The project convention (AGENTS.md) explicitly requires decimal.Decimal for money.",
+    "suggested_test": "cart.add_item('X','X',0.1,10); assert cart.subtotal() == pytest.approx(1.00, abs=1e-9)  # currently fails with Decimal"
+  },
+  {
+    "id": "F-05",
+    "file": "demo_app/cart.py",
+    "line": 87,
+    "severity": "medium",
+    "category": "edge-case/empty-cart",
+    "evidence": "On an empty cart range(len([])-1) == range(-1) — silently returns 0.0. Combined with the F-02 off-by-one, a one-item cart also returns 0.0, making empty and single-item states indistinguishable to callers.",
+    "suggested_test": "assert ShoppingCart().subtotal() == 0.0; cart.add_item('A','A',5.0,1); assert cart.subtotal() == 5.0"
+  },
+  {
+    "id": "F-06",
+    "file": "demo_app/cart.py",
+    "line": 100,
+    "severity": "medium",
+    "category": "maintainability/deep-nesting-duplication",
+    "evidence": "grand_total() has four nested if-guards; lines 107-109 and 111-113 are byte-for-byte identical, making the subtotal>0 branch dead code. The whole method reduces to subtotal() - discount_amount(). Future maintainers will modify one copy and miss the other.",
+    "suggested_test": "cart.apply_discount('SAVE10'); assert cart.grand_total() == pytest.approx(cart.subtotal() * 0.90)"
+  },
+  {
+    "id": "F-07",
+    "file": "demo_app/cart.py",
+    "line": 56,
+    "severity": "low",
+    "category": "edge-case/unhandled-input",
+    "evidence": "update_quantity() accepts negative values without validation. Setting quantity=-5 silently stores a negative stock count; subtotal() then returns a negative line total and a negative grand total, corrupting downstream financial output.",
+    "suggested_test": "cart.add_item('A','A',10.0,2); cart.update_quantity('A',-1); assert cart.subtotal() >= 0"
+  },
+  {
+    "id": "F-08",
+    "file": "demo_app/cart.py",
+    "line": 8,
+    "severity": "low",
+    "category": "correctness/float-arithmetic",
+    "evidence": "DISCOUNT_CODES stores float literals (0.10, 0.20, 0.50). When a correct Decimal-based fix is applied to prices, multiplying a Decimal subtotal by a float rate raises TypeError. Rates should be Decimal('0.10') etc.",
+    "suggested_test": "from decimal import Decimal; assert all(isinstance(v, Decimal) for v in DISCOUNT_CODES.values())"
+  }
+]
